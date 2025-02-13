@@ -3,8 +3,9 @@ name: Deploy
 on:
   push:
     branches:
-      - staging  # Only deploy when changes are pushed to the staging branch
-  workflow_dispatch:  # Allows manual triggering of the workflow
+      - staging
+      - main
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   deploy:
@@ -21,21 +22,18 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: |
-          # Build Docker image with the commit SHA tag
-          docker build -t nas1010/getting-started:$GITHUB_SHA .
+        run: docker build -t nas1010/getting-started:$GITHUB_SHA .
 
       - name: Push Docker image
-        run: |
-          # Push Docker image to Docker Hub
-          docker push nas1010/getting-started:$GITHUB_SHA
-
-      - name: Debug GitHub Ref
-        run: echo "Current branch: ${{ github.ref }}"
+        run: docker push nas1010/getting-started:$GITHUB_SHA
 
       - name: Deploy to Staging Server
-        if: github.ref == 'refs/heads/staging'  # Ensure the deployment only happens on the staging branch
+        if: github.ref == 'refs/heads/staging' # Ensure the deployment only happens on the staging branch
         run: |
           echo "Deploying to staging server"
-          # Example: SSH into your staging server and pull the Docker image
-          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} user@yourserver "docker pull nas1010/getting-started:$GITHUB_SHA && docker run -d nas1010/getting-started:$GITHUB_SHA"
+
+          # SSH into your staging server and run the commands
+          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} user@yourserver <<EOF
+            docker pull nas1010/getting-started:$GITHUB_SHA
+            docker run -d nas1010/getting-started:$GITHUB_SHA
+          EOF
