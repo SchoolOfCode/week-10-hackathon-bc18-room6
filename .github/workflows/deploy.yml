@@ -1,15 +1,14 @@
-name: Docker Deploy
+name: Deploy
 
 on:
   push:
     branches:
-      - main # Deploy to production when pushing to main
-      - staging # Deploy to staging when pushing to staging
-      - develop # Deploy to development when pushing to develop
-  workflow_dispatch:
+      - staging
+      - main
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,18 +23,19 @@ jobs:
 
       - name: Build and push Docker image
         run: |
+          # Build Docker image and tag it with the commit SHA
           docker build -t username/my-nextjs-app:$GITHUB_SHA .
+
+          # Push Docker image to Docker Hub
           docker push username/my-nextjs-app:$GITHUB_SHA
 
-      - name: Deploy to Server (staging/production)
+      - name: Deploy to Server
         run: |
+          # Example of deployment depending on the branch
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             echo "Deploying to production"
-            # Add deployment steps to your production server
+            # Add your production deployment steps here, like SSH to server
           elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
             echo "Deploying to staging"
-            # Add deployment steps to your staging server
-          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-            echo "Deploying to development"
-            # Add deployment steps to your dev server
+            # Add your staging deployment steps here
           fi
