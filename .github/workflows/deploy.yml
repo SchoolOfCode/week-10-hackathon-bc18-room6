@@ -1,0 +1,40 @@
+name: Docker Deploy
+
+on:
+  push:
+    branches:
+      - main # Deploy to production when pushing to main
+      - staging # Deploy to staging when pushing to staging
+      - develop # Deploy to development when pushing to develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t username/my-nextjs-app:$GITHUB_SHA .
+          docker push username/my-nextjs-app:$GITHUB_SHA
+
+      - name: Deploy to Server (staging/production)
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Deploying to production"
+            # Add deployment steps to your production server
+          elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
+            echo "Deploying to staging"
+            # Add deployment steps to your staging server
+          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            echo "Deploying to development"
+            # Add deployment steps to your dev server
+          fi
