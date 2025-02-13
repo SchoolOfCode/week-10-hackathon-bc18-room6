@@ -1,31 +1,31 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Card from "./components/Card";
-import { shuffleArray } from "./utils/shuffleArray";
+"use client"
+import React from "react"
+import {useState, useEffect} from "react"
+import Card from "./components/Card"
+import {shuffleArray} from "./utils/shuffleArray"
 
 const initialCards = [
-  { id: 1, content: "🐶" },
-  { id: 2, content: "🐱" },
-  { id: 3, content: "🐰" },
-  { id: 4, content: "🦊" },
-  { id: 5, content: "🐻" },
-  { id: 6, content: "🐼" },
-  { id: 7, content: "🐨" },
-  { id: 8, content: "🐯" },
-];
+  {id: 1, content: "🐶"},
+  {id: 2, content: "🐱"},
+  {id: 3, content: "🐰"},
+  {id: 4, content: "🦊"},
+  {id: 5, content: "🐻"},
+  {id: 6, content: "🐼"},
+  {id: 7, content: "🐨"},
+  {id: 8, content: "🐯"},
+]
 
 export default function MemoryGame() {
-  const [cards, setCards] = useState([]);
-  const [flippedIndexes, setFlippedIndexes] = useState([]);
-  const [matchedPairs, setMatchedPairs] = useState([]);
-  const [moves, setMoves] = useState(0);
-  const [score, setScore] = useState(0);
-  const [hintMessage, setHintMessage] = useState("");
+  const [cards, setCards] = useState([])
+  const [flippedIndexes, setFlippedIndexes] = useState([])
+  const [matchedPairs, setMatchedPairs] = useState([])
+  const [moves, setMoves] = useState(0)
+  const [score, setScore] = useState(0)
+  const [hintMessage, setHintMessage] = useState("")
 
   useEffect(() => {
-    resetGame();
-  }, []);
+    resetGame()
+  }, [])
 
   const handleCardClick = (clickedIndex) => {
     if (
@@ -33,59 +33,59 @@ export default function MemoryGame() {
       flippedIndexes.includes(clickedIndex) ||
       matchedPairs.includes(cards[clickedIndex].id)
     ) {
-      return;
+      return
     }
 
     if (flippedIndexes.length === 0) {
-      setHintMessage("");
+      setHintMessage("")
     }
 
-    const newFlippedIndexes = [...flippedIndexes, clickedIndex];
-    setFlippedIndexes(newFlippedIndexes);
+    const newFlippedIndexes = [...flippedIndexes, clickedIndex]
+    setFlippedIndexes(newFlippedIndexes)
 
     if (newFlippedIndexes.length === 2) {
-      setMoves(moves + 1);
+      setMoves(moves + 1)
 
-      const [firstIndex, secondIndex] = newFlippedIndexes;
+      const [firstIndex, secondIndex] = newFlippedIndexes
       if (cards[firstIndex].content === cards[secondIndex].content) {
         setMatchedPairs([
           ...matchedPairs,
           cards[firstIndex].id,
           cards[secondIndex].id,
-        ]);
-        setScore(score + 10);
-        setFlippedIndexes([]);
-        setHintMessage("");
+        ])
+        setScore(score + 10)
+        setFlippedIndexes([])
+        setHintMessage("")
       } else {
-        setTimeout(() => setFlippedIndexes([]), 1000);
+        setTimeout(() => setFlippedIndexes([]), 1000)
       }
     }
-  };
+  }
 
   const resetGame = () => {
-    setCards(shuffleArray([...initialCards, ...initialCards]));
-    setFlippedIndexes([]);
-    setMatchedPairs([]);
-    setMoves(0);
-    setScore(0);
-    setHintMessage("");
-  };
+    setCards(shuffleArray([...initialCards, ...initialCards]))
+    setFlippedIndexes([])
+    setMatchedPairs([])
+    setMoves(0)
+    setScore(0)
+    setHintMessage("")
+  }
 
   const showHint = () => {
     if (flippedIndexes.length === 1) {
-      const flippedCard = cards[flippedIndexes[0]];
+      const flippedCard = cards[flippedIndexes[0]]
       const hintIndex = cards.findIndex(
         (card, index) =>
           card.content === flippedCard.content && index !== flippedIndexes[0]
-      );
-      const row = Math.floor(hintIndex / 4) + 1;
-      setHintMessage(`The matching card is in row ${row}.`);
+      )
+      const row = Math.floor(hintIndex / 4) + 1
+      setHintMessage(`The matching card is in row ${row}.`)
     } else {
-      setHintMessage("Flip a card to get a hint.");
+      setHintMessage("Flip a card to get a hint.")
     }
-  };
+  }
 
-  const isGameOver = matchedPairs.length === cards.length;
+  const isGameOver = matchedPairs.length === cards.length
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -132,5 +132,5 @@ export default function MemoryGame() {
         </div>
       )}
     </div>
-  );
+  )
 }

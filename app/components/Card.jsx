@@ -1,6 +1,9 @@
-export default function Card({ card, isFlipped, onClick }) {
+import React from "react"
+
+export default function Card({card, isFlipped, onClick}) {
   return (
     <div
+      role="button"
       className={`h-24 flex items-center justify-center text-4xl cursor-pointer rounded-lg transition-colors duration-300 ${
         isFlipped ? "bg-white" : "bg-blue-500 hover:bg-blue-600"
       }`}
@@ -8,5 +11,5 @@ export default function Card({ card, isFlipped, onClick }) {
     >
       {isFlipped ? card.content : ""}
     </div>
-  );
+  )
 }
