@@ -6,6 +6,7 @@ on:
       - main # Deploy to production when pushing to main
       - staging # Deploy to staging when pushing to staging
       - develop # Deploy to development when pushing to develop
+  workflow_dispatch:
 
 jobs:
   build:
