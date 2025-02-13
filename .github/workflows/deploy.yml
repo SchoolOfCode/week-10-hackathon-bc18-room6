@@ -3,9 +3,8 @@ name: Deploy
 on:
   push:
     branches:
-      - staging
-      - main
-  workflow_dispatch: # Allows manual triggering of the workflow
+      - staging  # Only deploy when changes are pushed to the staging branch
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   deploy:
@@ -21,21 +20,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         run: |
-          # Build Docker image and tag it with the commit SHA
-          docker build -t username/my-nextjs-app:$GITHUB_SHA .
+          # Build Docker image with the commit SHA tag
+          docker build -t nas1010/getting-started:$GITHUB_SHA .
 
+      - name: Push Docker image
+        run: |
           # Push Docker image to Docker Hub
-          docker push username/my-nextjs-app:$GITHUB_SHA
+          docker push nas1010/getting-started:$GITHUB_SHA
 
-      - name: Deploy to Server
+      - name: Debug GitHub Ref
+        run: echo "Current branch: ${{ github.ref }}"
+
+      - name: Deploy to Staging Server
+        if: github.ref == 'refs/heads/staging'  # Ensure the deployment only happens on the staging branch
         run: |
-          # Example of deployment depending on the branch
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "Deploying to production"
-            # Add your production deployment steps here, like SSH to server
-          elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
-            echo "Deploying to staging"
-            # Add your staging deployment steps here
-          fi
+          echo "Deploying to staging server"
+          # Example: SSH into your staging server and pull the Docker image
+          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} user@yourserver "docker pull nas1010/getting-started:$GITHUB_SHA && docker run -d nas1010/getting-started:$GITHUB_SHA"
