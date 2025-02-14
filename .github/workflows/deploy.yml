@@ -33,7 +33,7 @@ jobs:
           echo "Deploying to staging server"
 
           # SSH into your staging server and run the commands
-          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} user@yourserver <<EOF
+          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} <<EOF
             docker pull nas1010/getting-started:$GITHUB_SHA
             docker run -d nas1010/getting-started:$GITHUB_SHA
           EOF
