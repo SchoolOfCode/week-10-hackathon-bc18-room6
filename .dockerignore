@@ -1,0 +1,27 @@
+# Node.js dependencies (do not include node_modules)
+node_modules/
+
+# Log files
+*.log
+
+# Git directory (repository metadata)
+.git/
+
+# Dockerfile and related Docker files (if needed)
+Dockerfile
+.dockerignore
+
+# Environment variables
+.env
+
+# Build output
+/dist
+/build
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
